@@ -127,7 +127,7 @@ data 'styl' (5000, "English") {
         ret = check_call([options.rez, '-a', tmp_file, '-o', dmg_file])
         call(['hdiutil', 'flatten', '-quiet', dmg_file])
         if options.compression is not None:
-            tmp_dmg = '{}.temp.dmg'.format(dmg_file)
+            tmp_dmg = f'{dmg_file}.temp.dmg'
             check_call(['cp', dmg_file, tmp_dmg])
             os.remove(dmg_file)
             args = ['hdiutil', 'convert', tmp_dmg, '-quiet', '-format']
@@ -139,9 +139,9 @@ data 'styl' (5000, "English") {
             check_call(args)
             os.remove(tmp_dmg)
     if ret == 0:
-        logger.info("Successfully added license to '{}'".format(dmg_file))
+        logger.info(f"Successfully added license to '{dmg_file}'")
     else:
-        logger.error("Failed to add license to '{}'".format(dmg_file))
+        logger.error(f"Failed to add license to '{dmg_file}'")
 
 
 if __name__ == '__main__':

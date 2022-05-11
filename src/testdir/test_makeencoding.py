@@ -48,9 +48,7 @@ def set_output_encoding(enc=None):
 
 
 def main():
-    enc = 'utf-8'
-    if len(sys.argv) > 1:
-        enc = sys.argv[1]
+    enc = sys.argv[1] if len(sys.argv) > 1 else 'utf-8'
     set_output_encoding(enc)
 
     message_tbl = {
@@ -60,7 +58,7 @@ def main():
             'cp936': '你好',
             }
 
-    print('Xfoobar.c(10) : %s (%s)' % (message_tbl[enc], enc))
+    print(f'Xfoobar.c(10) : {message_tbl[enc]} ({enc})')
 
 
 if __name__ == "__main__":

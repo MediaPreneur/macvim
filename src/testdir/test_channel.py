@@ -103,10 +103,11 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                         response = decoded[1][5:]
                         time.sleep(0.01)
                     elif decoded[1] == 'make change':
-                        # Send two ex commands at the same time, before
-                        # replying to the request.
-                        cmd = '["ex","call append(\\"$\\",\\"added1\\")"]'
-                        cmd += '["ex","call append(\\"$\\",\\"added2\\")"]'
+                        cmd = (
+                            '["ex","call append(\\"$\\",\\"added1\\")"]'
+                            + '["ex","call append(\\"$\\",\\"added2\\")"]'
+                        )
+
                         print("sending: {0}".format(cmd))
                         self.request.sendall(cmd.encode('utf-8'))
                         response = "ok"
@@ -236,18 +237,15 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                         print("sending: {0}".format(encoded))
                         self.request.sendall(encoded.encode('utf-8'))
 
-                # Negative numbers are used for "eval" responses.
-                elif decoded[0] < 0:
+                else:
                     last_eval = decoded
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
 
 def writePortInFile(port):
-    # Write the port number in Xportnr, so that the test knows it.
-    f = open("Xportnr", "w")
-    f.write("{0}".format(port))
-    f.close()
+    with open("Xportnr", "w") as f:
+        f.write("{0}".format(port))
 
 def main(host, port, server_class=ThreadedTCPServer):
     # Wait half a second before opening the port to test waittime in ch_open().
@@ -261,7 +259,7 @@ def main(host, port, server_class=ThreadedTCPServer):
         time.sleep(0.5)
 
     server = server_class((host, port), ThreadedTCPRequestHandler)
-    ip, port = server.server_address[0:2]
+    ip, port = server.server_address[:2]
 
     # Start a thread with the server.  That thread will then start a new thread
     # for each connection.
